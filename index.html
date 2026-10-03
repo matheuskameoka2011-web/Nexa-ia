@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101014">
+<title>NEXA AI</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101014;
+  --panel: #18181e;
+  --border: #303039;
+  --text: #f5f5f7;
+  --muted: #a1a1ad;
+  --accent: #a78bfa;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+button, textarea { font: inherit; }
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  height: 62px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #111018;
+  background: linear-gradient(135deg,#c4b5fd,#8b5cf6);
+  font-weight: 900;
+}
+.brand { font-weight: 750; font-size: 18px; }
+.brand span { color: var(--accent); }
+.status {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 28px 18px 18px;
+  display: flex;
+  flex-direction: column;
+}
+.welcome {
+  margin: auto 0;
+  text-align: center;
+  padding: 32px 0;
+}
+.hero-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: clamp(27px,6vw,38px);
+  letter-spacing: -1.2px;
+  margin: 0 0 12px;
+}
+.welcome p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 auto 24px;
+  max-width: 430px;
+}
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 10px;
+  max-width: 540px;
+  margin: auto;
+}
+.suggestion {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.suggestion:hover { border-color: var(--accent); }
+.suggestion strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+.suggestion small { color: var(--muted); }
+#messages {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-bottom: 20px;
+}
+.message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+}
+.message.user {
+  align-self: flex-end;
+  max-width: 88%;
+  background: #292832;
+  border-radius: 18px;
+  padding: 12px 16px;
+}
+.message.assistant { padding: 0 4px; }
+.message img {
+  display: block;
+  max-width: 100%;
+  max-height: 260px;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+.composer {
+  border: 1px solid #41404c;
+  border-radius: 22px;
+  background: var(--panel);
+  padding: 10px;
+  box-shadow: 0 10px 35px #0002;
+}
+#preview {
+  display: none;
+  padding: 4px 8px 10px;
+  align-items: center;
+  gap: 10px;
+}
+#preview img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+#removeImage {
+  border: 0;
+  background: #34333e;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+textarea {
+  width: 100%;
+  resize: none;
+  min-height: 48px;
+  max-height: 150px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--text);
+  padding: 10px;
+}
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tool {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text);
+  background: #24232b;
+  cursor: pointer;
+  font-size: 19px;
+}
+#send {
+  margin-left: auto;
+  background: var(--accent);
+  color: #171321;
+  font-weight: 800;
+  border: 0;
+}
+#send:disabled { opacity: .4; }
+.hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 10px 4px 0;
+  line-height: 1.5;
+}
+footer {
+  text-align: center;
+  color: #777783;
+  font-size: 11px;
+  padding: 8px 12px 14px;
+}
+@media (max-width: 430px) {
+  main { padding: 20px 13px 12px; }
+  .suggestions { grid-template-columns: 1fr; }
+  .suggestion { padding: 11px 13px; }
+  .welcome { padding: 22px 0; }
+  .status { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">N</div>
+    <div class="brand">NEXA <span>AI</span></div>
+    <div class="status">Assistente pessoal</div>
+  </header>
+
+  <main>
+    <section class="welcome" id="welcome">
+      <div class="hero-icon">✳</div>
+      <h1>Como posso ajudar?</h1>
+      <p>Faça perguntas, explore ideias e resolva problemas. Vamos descobrir as respostas juntos.</p>
+      <div class="suggestions">
+        <button class="suggestion" data-prompt="Explique um assunto difícil de maneira simples.">
+          <strong>✦ Aprender algo novo</strong>
+          <small>Entenda assuntos complexos</small>
+        </button>
+        <button class="suggestion" data-prompt="Ajude-me a resolver um problema passo a passo.">
+          <strong>⌘ Resolver problemas</strong>
+          <small>Raciocínio passo a passo</small>
+        </button>
+        <button class="suggestion" data-prompt="Ajude-me a criar uma ideia original.">
+          <strong>✎ Criar alguma coisa</strong>
+          <small>Projetos e novas ideias</small>
+        </button>
+        <button class="suggestion" data-prompt="Explique como analisar uma questão de estudo.">
+          <strong>▧ Estudar melhor</strong>
+          <small>Questões e explicações</small>
+        </button>
+      </div>
+    </section>
+
+    <section id="messages" aria-live="polite"></section>
+
+    <form class="composer" id="chatForm">
+      <div id="preview">
+        <img id="previewImg" alt="Imagem selecionada">
+        <span style="flex:1;color:#b9b7c6;font-size:13px">Imagem anexada</span>
+        <button type="button" id="removeImage" aria-label="Remover imagem">×</button>
+      </div>
+      <textarea id="prompt" rows="1" placeholder="Pergunte qualquer coisa..." aria-label="Sua mensagem"></textarea>
+      <div class="tools">
+        <button class="tool" type="button" id="uploadBtn" aria-label="Enviar foto">＋</button>
+        <input type="file" id="imageInput" accept="image/*" hidden>
+        <span style="color:var(--muted);font-size:11px">Envie uma pergunta ou foto</span>
+        <button class="tool" id="send" type="submit" aria-label="Enviar mensagem">↑</button>
+      </div>
+    </form>
+    <div class="hint">O NEXA AI está em construção. A conexão com a inteligência artificial será adicionada na próxima etapa.</div>
+  </main>
+  <footer>NEXA AI · Seu espaço para descobrir e aprender</footer>
+</div>
+
+<script>
+const form = document.getElementById('chatForm');
+const promptInput = document.getElementById('prompt');
+const messages = document.getElementById('messages');
+const welcome = document.getElementById('welcome');
+const imageInput = document.getElementById('imageInput');
+const preview = document.getElementById('preview');
+const previewImg = document.getElementById('previewImg');
+const sendButton = document.getElementById('send');
+let selectedImage = null;
+
+document.querySelectorAll('.suggestion').forEach(button => {
+  button.addEventListener('click', () => {
+    promptInput.value = button.dataset.prompt;
+    promptInput.focus();
+  });
+});
+
+document.getElementById('uploadBtn').addEventListener('click', () => {
+  imageInput.click();
+});
+
+imageInput.addEventListener('change', () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    alert('Escolha um arquivo de imagem.');
+    imageInput.value = '';
+    return;
+  }
+  if (file.size > 8 * 1024 * 1024) {
+    alert('Escolha uma imagem de até 8 MB.');
+    imageInput.value = '';
+    return;
+  }
+  selectedImage = file;
+  previewImg.src = URL.createObjectURL(file);
+  preview.style.display = 'flex';
+});
+
+document.getElementById('removeImage').addEventListener('click', () => {
+  selectedImage = null;
+  imageInput.value = '';
+  previewImg.removeAttribute('src');
+  preview.style.display = 'none';
+});
+
+promptInput.addEventListener('input', () => {
+  promptInput.style.height = 'auto';
+  promptInput.style.height = Math.min(promptInput.scrollHeight, 150) + 'px';
+});
+
+function addMessage(text, role, imageURL) {
+  const div = document.createElement('div');
+  div.className = 'message ' + role;
+  div.textContent = text;
+  if (imageURL) {
+    const img = document.createElement('img');
+    img.src = imageURL;
+    img.alt = 'Imagem enviada na conversa';
+    div.appendChild(img);
+  }
+  messages.appendChild(div);
+}
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  const text = promptInput.value.trim();
+  if (!text && !selectedImage) return;
+
+  welcome.style.display = 'none';
+  const imageURL = selectedImage ? URL.createObjectURL(selectedImage) : null;
+  addMessage(text || 'Analise esta imagem, por favor.', 'user', imageURL);
+
+  promptInput.value = '';
+  promptInput.style.height = 'auto';
+  selectedImage = null;
+  imageInput.value = '';
+  preview.style.display = 'none';
+  previewImg.removeAttribute('src');
+
+  addMessage(
+    'Sua mensagem chegou à interface! A conexão com o modelo de IA será configurada na próxima etapa. Por enquanto, ainda não consigo gerar respostas reais.',
+    'assistant'
+  );
+  sendButton.blur();
+  window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+});
+</script>
+</body>
+  </html>
+    
