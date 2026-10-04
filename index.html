@@ -334,7 +334,7 @@ function addMessage(text, role, imageURL) {
   messages.appendChild(div);
 }
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
   const text = promptInput.value.trim();
   if (!text && !selectedImage) return;
@@ -350,9 +350,40 @@ form.addEventListener('submit', event => {
   preview.style.display = 'none';
   previewImg.removeAttribute('src');
 
-  addMessage(
-    'Sua mensagem chegou à interface! A conexão com o modelo de IA será configurada na próxima etapa. Por enquanto, ainda não consigo gerar respostas reais.',
-    'assistant'
+  
+const assistantMessage = document.createElement('div');
+assistantMessage.className = 'message assistant';
+assistantMessage.textContent = 'Pensando...';
+messages.appendChild(assistantMessage);
+
+try {
+  const response = await fetch(
+    'https://nexa-ai-api.matheuskameoka2011.workers.dev/chat',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: text || 'Analise a imagem enviada.'
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Erro ao consultar a IA.');
+  }
+
+  assistantMessage.textContent =
+    data.reply || 'Não recebi uma resposta da IA.';
+
+} catch (error) {
+  assistantMessage.textContent =
+    'Não consegui conectar à IA. Verifique o servidor e tente novamente.';
+}
+  
   );
   sendButton.blur();
   window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
